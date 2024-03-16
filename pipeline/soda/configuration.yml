@@ -1,0 +1,13 @@
+# Service Account Key authentication method
+# See Authentication methods below for more config options
+data_source bigquery_soda:
+  type: bigquery
+  account_info_json: ${ACCOUNT_INFO_JSON}
+  auth_scopes:
+  - https://www.googleapis.com/auth/bigquery
+  - https://www.googleapis.com/auth/cloud-platform
+  - https://www.googleapis.com/auth/drive
+  project_id: ${PROJECT_ID}
+  dataset: ${DATASET_ID}
+  # use_context_auth: True
+  # impersonation_account: sa-soda-dataquality@eco-hangar-412101.iam.gserviceaccount.com

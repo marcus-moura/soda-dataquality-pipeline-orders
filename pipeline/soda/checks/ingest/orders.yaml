@@ -1,0 +1,37 @@
+checks for orders:
+  # Check fails when OrderID, CustomerID, EmployeeID 
+  # is missing, OR
+  # when the data type of those columns is other than specified
+  - schema:
+      fail:
+        when required column missing: [OrderID, CustomerID, EmployeeID]
+        when wrong column type:
+          OrderID: integer
+          CustomerID: string
+          EmployeeID: integer
+          OrderDate: timestamp
+          RequiredDate: timestamp
+          ShippedDate: timestamp
+          ShipVia: integer
+          Freight: float64
+          ShipName: string
+          ShipAddress: string
+          ShipCity: string
+          ShipRegion: string
+          ShipPostalCode: string
+          ShipCountry: string
+
+  # Check fails when any NULL values exist in the column
+  - missing_count(OrderID) = 0:
+      name: All orders have a product associated
+  # Check fails when any NULL values exist in the column
+  - missing_count(CustomerID):
+      name: All orders have a product associated
+      warn: when < 100000
+  # Check fails when any NULL values exist in the column
+  - missing_count(EmployeeID) = 0:
+      name: All orders have a product associated
+
+  # Check fails when any order contains no items 
+  - min(Freight) > 0:
+      name: All sales have a non-zero order quantity

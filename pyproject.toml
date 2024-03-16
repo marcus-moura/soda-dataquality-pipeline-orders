@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "checks"
+version = "0.1.0"
+description = ""
+authors = ["Marcus <marcus.moura@ipnet.cloud>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+soda-core-bigquery = "^3.2.3"
+google-cloud-bigquery-storage = "^2.24.0"
+duckdb = "^0.10.0"
+google-cloud-bigquery = "^3.19.0"
+pandas = "^2.2.1"
+loguru = "^0.7.2"
+pyarrow = "^15.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
