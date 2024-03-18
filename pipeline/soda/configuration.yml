@@ -9,5 +9,3 @@ data_source bigquery_soda:
   - https://www.googleapis.com/auth/drive
   project_id: ${PROJECT_ID}
   dataset: ${DATASET_ID}
-  # use_context_auth: True
-  # impersonation_account: sa-soda-dataquality@eco-hangar-412101.iam.gserviceaccount.com

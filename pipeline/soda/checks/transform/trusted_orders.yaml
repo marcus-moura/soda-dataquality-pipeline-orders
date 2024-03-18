@@ -1,0 +1,37 @@
+checks for trusted_orders:
+  # Check fails when id_pedido, id_cliente, id_responsavel_pedido, cep_entrega_pedido
+  # is missing, OR
+  # when the data type of those columns is other than specified
+  
+  - schema:
+      fail:
+        when required column missing: [id_pedido, id_cliente, id_responsavel_pedido, cep_entrega_pedido]
+        when wrong column type:
+            id_pedido: integer
+            id_cliente: string
+            id_responsavel_pedido: integer
+            mes_referencia_pedido: date
+            data_envio: date
+            valor_frete: float64
+            responsavel_envio: string
+            endereco_entrega_pedido: string
+            numero_entrega_pedido: integer
+            cidade_entrega_pedido: string
+            estado_entrega_pedido: string
+            cep_entrega_pedido: string
+            pais_entrega_pedido: string
+
+  # Check fails when any NULL values exist in the column
+  - missing_count(OrderID) = 0:
+      name: All orders have a product associated
+  # Check fails when any NULL values exist in the column
+  - missing_count(CustomerID):
+      name: All orders have a product associated
+      warn: when < 100000
+  # Check fails when any NULL values exist in the column
+  - missing_count(EmployeeID) = 0:
+      name: All orders have a product associated
+
+  # Check fails when any order contains no items 
+  - min(valor_frete) > 0:
+      name: All Freight have a non-zero order quantity
