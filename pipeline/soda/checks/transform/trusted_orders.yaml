@@ -22,15 +22,15 @@ checks for trusted_orders:
             pais_entrega_pedido: string
 
   # Check fails when any NULL values exist in the column
-  - missing_count(OrderID) = 0:
+  - missing_count(id_pedido) = 0:
       name: All orders have a product associated
   # Check fails when any NULL values exist in the column
-  - missing_count(CustomerID):
+  - missing_count(id_cliente):
       name: All orders have a product associated
-      warn: when < 100000
   # Check fails when any NULL values exist in the column
-  - missing_count(EmployeeID) = 0:
+  - missing_count(id_responsavel_pedido) = 0:
       name: All orders have a product associated
+      warn: when > 50
 
   # Check fails when any order contains no items 
   - min(valor_frete) > 0:
