@@ -60,7 +60,8 @@ class BigQueryLoadData:
         time_partitioning: str = None,
         partition_field: str = None,
         location: str = 'southamerica-east1',
-        schema_relax: bool = False
+        schema_relax: bool = False,
+        client: bigquery.Client = bigquery.Client(),
     ):
         
         self.data_source = data_source
@@ -80,7 +81,7 @@ class BigQueryLoadData:
         self.location = location
         
         self.schema_relax = schema_relax
-        self.client = bigquery.Client()
+        self.client = client
 
         if time_partitioning:
             if time_partitioning.lower() == 'day':
