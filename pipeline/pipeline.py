@@ -32,7 +32,8 @@ def main():
                 dataset_id=dataset_id,
                 table_name=table_ingest,
                 write_disposition=write_disposition,
-                location = location
+                location = location,
+                client=client_bq
     )
 
     run_soda_scan(
@@ -54,7 +55,8 @@ def main():
                 dataset_id=dataset_id,
                 table_name=table_transform,
                 write_disposition=write_disposition,
-                location = location
+                location = location,
+                client=client_bq
     )
     
     run_soda_scan(
