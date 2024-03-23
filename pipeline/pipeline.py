@@ -1,67 +1,84 @@
 import os
-from bigquery import BigQueryLoadData, bigquery_run_query_to_dataframe, get_bigquery_client
+from bigquery import BigQueryDataLoader, BigQueryExtractor, get_bigquery_client
 from soda.scan_operations import run_soda_scan
-import pandas as pd
-from duckdb_operations import duck_load_csv_to_dataframe, duck_transform_data
+from duckdb_operations import duck_read_csv_to_dataframe, duck_transform_data
 
 
 def main():
+    # Environment variables
     project_id = os.getenv("PROJECT_ID")
     dataset_id = os.getenv("DATASET_ID")
     location = os.getenv("LOCATION")
+    
+    #Client BigQuery
     client_bq = get_bigquery_client(project_id)
-    path_file = "data/orders.csv"
+    
+    # File path data source
+    path_file_data_source = "data/orders.csv"
+    
+     # Load configuration
     write_disposition="WRITE_TRUNCATE"
-    data_source_soda = "bigquery_soda"
+    
+    # SODA data source
+    soda_data_source = "bigquery_soda"
 
-    # Variables ingest
-    table_ingest = "raw_orders"
-    scan_name_ingest = "orders"
-    checks_subpath_ingest = "ingest"
+    # Ingestion variables
+    table_raw= "raw_orders"
+    scan_name_raw = table_raw
+    checks_subpath_raw = "raw"
     
-    # Variables transform
-    table_transform = "trusted_orders"
-    scan_name_transform = "orders"
-    checks_subpath_transform = "transform"
+    # Transformation variables
+    table_trusted = "trusted_orders"
+    scan_name_trusted = table_trusted
+    checks_subpath_trusted = "trusted"
     
-    df_duck_raw = duck_load_csv_to_dataframe(path_file)
+    # Objects
+    bq_extractor = BigQueryExtractor(client_bq)
+    bq_loader = BigQueryDataLoader(project_id, location, client_bq)
     
-    BigQueryLoadData(
-                data_source=df_duck_raw,
-                project_id=project_id,
+    # Load raw data from CSV file to BigQuery
+    df_duck_raw = duck_read_csv_to_dataframe(path_file_data_source)
+    bq_loader.load_dataframe(
+                dataframe=df_duck_raw,
                 dataset_id=dataset_id,
-                table_name=table_ingest,
+                table_name=table_raw,
                 write_disposition=write_disposition,
                 location = location,
                 client=client_bq
     )
 
+    # Run SODA check after ingestion
     run_soda_scan(
-        data_source=data_source_soda, 
-        scan_name=scan_name_ingest, 
-        checks_subpath=checks_subpath_ingest
+        data_source=soda_data_source,
+        scan_name=scan_name_raw,
+        checks_subpath=checks_subpath_raw
     )
 
-    df_bigquery_raw = bigquery_run_query_to_dataframe(
+    # Extract raw data from BigQuery to a DataFrame
+    df_bigquery_raw = bq_extractor.extract_data_from_bigquery_query(
             query=f"SELECT * FROM {project_id}.{dataset_id}.{location}", 
-            bigquery_client=client_bq
+            client=client_bq
     )
     
+    # Transform raw data
     df_duck_transform = duck_transform_data(df_bigquery_raw)
     
-    BigQueryLoadData(
-                data_source=df_duck_transform,
-                project_id=project_id,
+    # Load transformed data to BigQuery
+    bq_loader.load_dataframe(
+                dataframe=df_duck_transform,
                 dataset_id=dataset_id,
-                table_name=table_transform,
+                table_name=table_trusted,
                 write_disposition=write_disposition,
-                location = location,
-                client=client_bq
+                location = location
     )
     
+    # Run SODA check after transformation
     run_soda_scan(
-        data_source=data_source_soda, 
-        scan_name=scan_name_transform, 
-        checks_subpath=checks_subpath_transform
+        data_source=soda_data_source, 
+        scan_name=scan_name_trusted, 
+        checks_subpath=checks_subpath_trusted
     )
     
+
+if __name__ == "__main__":
+    main()

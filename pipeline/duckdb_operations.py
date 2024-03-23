@@ -1,7 +1,7 @@
 import duckdb
 import pandas as pd
 
-def duck_load_csv_to_dataframe(path_file: str) -> pd.DataFrame:
+def duck_read_csv_to_dataframe(path_file: str) -> pd.DataFrame:
     return duckdb.read_csv(path_file).df()
 
 def duck_transform_data(df: pd.DataFrame) -> pd.DataFrame:
