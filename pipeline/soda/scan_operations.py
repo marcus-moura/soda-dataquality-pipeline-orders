@@ -1,7 +1,8 @@
+from loguru import logger
+
 def run_soda_scan(data_source, scan_name, project_root='soda', checks_subpath = None):
     from soda.scan import Scan
 
-    print("Running Soda Scan ...")
     config_file = f"{project_root}/configuration.yml"
     checks_path = f"{project_root}/checks"
 
@@ -16,7 +17,7 @@ def run_soda_scan(data_source, scan_name, project_root='soda', checks_subpath = 
     scan.set_scan_definition_name(scan_name)
 
     result = scan.execute()
-    print(scan.get_logs_text())
+    logger.info(scan.get_logs_text())
 
     if result != 0:
         raise ValueError('Soda Scan failed')
