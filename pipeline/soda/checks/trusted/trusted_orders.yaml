@@ -1,37 +1,45 @@
 checks for trusted_orders:
-  # Check fails when id_pedido, id_cliente, id_responsavel_pedido, cep_entrega_pedido
-  # is missing, OR
-  # when the data type of those columns is other than specified
-  
-  - schema:
-      fail:
-        when required column missing: [id_pedido, id_cliente, id_responsavel_pedido, cep_entrega_pedido]
-        when wrong column type:
-            id_pedido: integer
-            id_cliente: string
-            id_responsavel_pedido: integer
-            mes_referencia_pedido: date
-            data_envio: date
-            valor_frete: float64
-            responsavel_envio: string
-            endereco_entrega_pedido: string
-            numero_entrega_pedido: integer
-            cidade_entrega_pedido: string
-            estado_entrega_pedido: string
-            cep_entrega_pedido: string
-            pais_entrega_pedido: string
+    # Check fails when order_id, customer_id, employee_id, order_delivery_postal_code
+    # is missing, OR
+    # when the data type of those columns is other than specified
+    - schema:
+        fail:
+            when required column missing: [order_id, customer_id, employee_id, order_delivery_postal_code]
+            when wrong column type:
+                order_id: integer
+                customer_id: string
+                employee_id: integer
+                order_reference_month: timestamp
+                shipped_date: timestamp
+                cost_freight: float64
+                ship_date: string
+                order_delivery_address: string
+                order_delivery_number: integer
+                order_delivery_city: string
+                order_delivery_region: string
+                order_delivery_postal_code: string
+                order_delivery_country: string
 
-  # Check fails when any NULL values exist in the column
-  - missing_count(id_pedido) = 0:
-      name: All orders have a product associated
-  # Check fails when any NULL values exist in the column
-  - missing_count(id_cliente):
-      name: All orders have a product associated
-  # Check fails when any NULL values exist in the column
-  - missing_count(id_responsavel_pedido) = 0:
-      name: All orders have a product associated
-      warn: when > 50
+    # Check fails when any NULL values exist in the column
+    - missing_count(order_id) = 0:
+        name: All orders have a key
+    
+    - duplicate_count(order_id) = 0:
+        name: Every order ID must be unique
 
-  # Check fails when any order contains no items 
-  - min(valor_frete) > 0:
-      name: All Freight have a non-zero order quantity
+    # Check fails when any NULL values exist in the column
+    - missing_count(customer_id) = 0:
+        name: All orders have a customers associated
+    # Check fails when any NULL values exist in the column
+    - missing_count(employee_id):
+        name: All orders have a employee_id associated
+        warn: when >= 1
+
+    # Check fails when any cost_freight is less than or equal to zero
+    - min(cost_freight) > 0:
+        name: All Freight have a non-zero order quantity
+
+    - invalid_count(order_delivery_postal_code) = 0:
+        valid regex: ^\d{5}-\d{3}$
+        name: All postal_code have pattern 5-3 digits
+    

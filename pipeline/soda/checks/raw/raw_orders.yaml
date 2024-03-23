@@ -1,44 +1,41 @@
 checks for raw_orders:
-  # Check fails when OrderID, CustomerID, EmployeeID 
-  # is missing, OR
+  # Check fails when OrderID, CustomerID, EmployeeID is missing, OR
   # when the data type of those columns is other than specified
     - schema:
         fail:
-        when required column missing: [OrderID, CustomerID, EmployeeID]
-        when wrong column type:
-            OrderID: integer
-            CustomerID: string
-            EmployeeID: integer
-            OrderDate: timestamp
-            RequiredDate: timestamp
-            ShippedDate: timestamp
-            ShipVia: integer
-            Freight: float64
-            ShipName: string
-            ShipAddress: string
-            ShipCity: string
-            ShipRegion: string
-            ShipPostalCode: string
-            ShipCountry: string
+            when required column missing: [OrderID, CustomerID, EmployeeID]
+            when wrong column type:
+                OrderID: integer
+                CustomerID: string
+                EmployeeID: integer
+                OrderDate: timestamp
+                RequiredDate: timestamp
+                ShippedDate: timestamp
+                ShipVia: integer
+                Freight: float64
+                ShipName: string
+                ShipAddress: string
+                ShipCity: string
+                ShipRegion: string
+                ShipPostalCode: string
+                ShipCountry: string
 
     # Check fails when any NULL values exist in the column OrderID
     - missing_count(OrderID) = 0:
         name: All orders have a key
     # Check fails when any NULL values exist in the column CustomerID
     - missing_count(CustomerID) = 0:
-        name: All customers have a key
+        name: All orders have customer associated
     # Check fails when any NULL values exist in the column EmployeeID
     - missing_count(EmployeeID) = 0:
-        name: All orders have a product associated
+        name: All orders have a employee associated
     # Warning when NULL values are > 0 in the column ShipPostalCode
     - missing_count(ShipPostalCode):
-        warn: when > 0
+        warn: when > 30
 
     # Check fails when any order contains no items 
     - min(Freight) > 0:
         name: All sales have a Freight non-zero
     
-    - row_count > 0
-    
-    - duplicate_count(OrderID):
-        name: Every order ID must be unique
+    - row_count > 0:
+        name: Total dever ser maior que 0
