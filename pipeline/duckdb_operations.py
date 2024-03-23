@@ -6,21 +6,21 @@ def duck_read_csv_to_dataframe(path_file: str) -> pd.DataFrame:
 
 def duck_transform_data(df: pd.DataFrame) -> pd.DataFrame:
         return duckdb.sql("""
-                    SELECT 
-                        OrderID AS id_pedido,
-                        CustomerID AS id_cliente,
-                        EmployeeID AS id_responsavel_pedido,
-                        DATE_TRUNC(OrderDate, MONTH)::DATE AS mes_referencia_pedido,	
-                        ShippedDate AS data_envio,
-                        Freight AS valor_frete,
-                        ShipName AS responsavel_envio,	
-                        REGEXP_REPLACE(ShipAddress, ",\\s*(\\d+)", "") AS endereco_entrega_pedido,
-                        REGEXP_EXTRACT(ShipAddress, ",\\s*(\\d+)")::INT64 AS numero_entrega_pedido,
-                        ShipCity AS cidade_entrega_pedido,	
-                        ShipRegion AS estado_entrega_pedido,	
-                        ShipPostalCode AS cep_entrega_pedido,
-                        REPLACE(ShipCountry, "z", "s") AS pais_entrega_pedido,	
-                    FROM df
-                    WHERE ShipCountry = "Brazil"
+                SELECT 
+                    OrderID AS order_id,
+                    CustomerID AS customer_id,
+                    EmployeeID AS employee_id,
+                    DATETRUNC('MONTH', OrderDate)::DATE AS order_reference_month,	
+                    ShippedDate::TIMESTAMP AS shipped_date,
+                    Freight AS cost_freight,
+                    ShipName AS ship_date,	
+                    REGEXP_REPLACE(ShipAddress, ',\\s*(\\d+)', '') AS order_delivery_address,
+                    REGEXP_EXTRACT(ShipAddress, '\\s*(\\d+)')::INT64 AS order_delivery_number,
+                    ShipCity AS order_delivery_city,	
+                    ShipRegion AS order_delivery_region,	
+                    ShipPostalCode AS order_delivery_postal_code,
+                    REPLACE(ShipCountry, 'z', 's') AS order_delivery_country,	
+                FROM df_bigquery_raw
+                WHERE ShipCountry = 'Brazil'
             
             """).df()
