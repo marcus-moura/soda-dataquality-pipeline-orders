@@ -1,41 +1,41 @@
-import os
-from bigquery import BigQueryDataLoader, BigQueryExtractor, get_bigquery_client
-from soda.scan_operations import run_soda_scan
-from duckdb_operations import duck_read_csv_to_dataframe, duck_transform_data
+from app.bigquery import BigQueryDataLoader, BigQueryExtractor, get_bigquery_client
+from app.soda.scan_operations import run_soda_scan
+from app.duckdb_operations import duck_read_csv_to_dataframe, duck_transform_data
+from app import utils
 from loguru import logger
 import sys
+import typer
+
+app = typer.Typer()
 
 # Configuração do log
 logger.remove()
-logger.add(sys.stdout, colorize=True, format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {level} | {message}", 
-           level="INFO"
-        )
-
-def main():
-    # Environment variables
-    project_id = os.getenv("PROJECT_ID")
-    dataset_id = os.getenv("DATASET_ID")
-    location = os.getenv("LOCATION")
+logger.add(sys.stdout, colorize=True, format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {level} | {message}")
+logger.level("INFO")
     
+@app.command()
+def run(project_id: str = typer.Option(..., "--project_id"),
+        location: str = typer.Option(..., "--location"),
+        dataset_id: str = typer.Option(..., "--dataset_id"),
+        file_source: str = typer.Option(..., "--file_source"),
+        table_raw: str = typer.Option(..., "--table_raw"),
+        table_trusted: str = typer.Option(..., "--table_trusted"),
+        write_disposition: str = typer.Option("WRITE_TRUNCATE", "--write_disposition"),
+        soda_data_source: str = typer.Option("bigquery_soda", "--soda_data_source"),
+        checks_subpath_raw: str = typer.Option("raw", "--checks_subpath_raw"),
+        checks_subpath_trusted: str = typer.Option("trusted", "--checks_subpath_trusted")
+    ):
+    """
+    Starting Pipeline.
+    """
+
     # BigQuery Client
     client_bq = get_bigquery_client(project_id)
-    
-    # BigQuery Load configurations
-    write_disposition = "WRITE_TRUNCATE"
-    table_raw = "raw_orders"
-    table_trusted = "trusted_orders"
-
-    # Soda configurations
-    path_file_data_source = "input_data/orders.csv"
-    soda_data_source = "bigquery_soda"
-    scan_name_raw = table_raw
-    scan_name_trusted = table_trusted
-    checks_subpath_raw = "raw"
-    checks_subpath_trusted = "trusted"
-    
     # Objects
     bq_extractor = BigQueryExtractor(client_bq)
     bq_loader = BigQueryDataLoader(project_id, location, client_bq)
+    
+    path_file_data_source = utils.get_file_path(file_source)
     
     # Load raw data from CSV file into BigQuery
     logger.info("Starting order pipeline!")
@@ -51,7 +51,7 @@ def main():
 
     # Run SODA check after ingestion
     logger.info(f"Running SODA Scan {table_raw}...")
-    run_soda_scan(data_source=soda_data_source, scan_name=scan_name_raw, checks_subpath=checks_subpath_raw)
+    run_soda_scan(data_source=soda_data_source, scan_name=table_raw, checks_subpath=checks_subpath_raw)
     logger.success(f"SODA Scan {table_raw} completed!")
 
     # Extract raw data from BigQuery into a DataFrame
@@ -76,8 +76,12 @@ def main():
     
     # Run SODA check after transformation
     logger.info(f"Running SODA Scan {table_trusted}...")
-    run_soda_scan(data_source=soda_data_source, scan_name=scan_name_trusted, checks_subpath=checks_subpath_trusted)
+    run_soda_scan(data_source=soda_data_source, scan_name=table_trusted, checks_subpath=checks_subpath_trusted)
     logger.success(f"SODA Scan {table_trusted} completed!")
 
+@app.command()
+def comands_2():
+    pass
+
 if __name__ == "__main__":
-    main()
+    app()

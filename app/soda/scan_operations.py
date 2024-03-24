@@ -1,10 +1,10 @@
 from loguru import logger
 
-def run_soda_scan(data_source, scan_name, project_root='soda', checks_subpath = None):
+def run_soda_scan(data_source, scan_name, project_root='app', checks_subpath = None):
     from soda.scan import Scan
 
-    config_file = f"{project_root}/configuration.yml"
-    checks_path = f"{project_root}/checks"
+    config_file = f"{project_root}/soda/configuration.yml"
+    checks_path = f"{project_root}/soda/checks"
 
     if checks_subpath:
         checks_path += f"/{checks_subpath}"

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "checks"
+name = "app"
 version = "0.1.0"
 description = ""
 authors = ["Marcus <marcus.moura@ipnet.cloud>"]
@@ -15,6 +15,7 @@ pandas = "^2.2.1"
 loguru = "^0.7.2"
 pyarrow = "^15.0.1"
 db-dtypes = "^1.2.0"
+typer = {extras = ["all"], version = "^0.10.0"}
 
 
 [build-system]
