@@ -8,7 +8,7 @@ import typer
 
 app = typer.Typer()
 
-# Configuração do log
+# Log Config
 logger.remove()
 logger.add(sys.stdout, colorize=True, format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {level} | {message}")
 logger.level("INFO")
@@ -25,9 +25,6 @@ def run(project_id: str = typer.Option(..., "--project_id"),
         checks_subpath_raw: str = typer.Option("raw", "--checks_subpath_raw"),
         checks_subpath_trusted: str = typer.Option("trusted", "--checks_subpath_trusted")
     ):
-    """
-    Starting Pipeline.
-    """
 
     # BigQuery Client
     client_bq = get_bigquery_client(project_id)
@@ -79,9 +76,11 @@ def run(project_id: str = typer.Option(..., "--project_id"),
     run_soda_scan(data_source=soda_data_source, scan_name=table_trusted, checks_subpath=checks_subpath_trusted)
     logger.success(f"SODA Scan {table_trusted} completed!")
 
-@app.command()
-def comands_2():
-    pass
+@app.callback()
+def callback():
+    """
+    Execute a data quality pipeline with SODA.
+    """
 
 if __name__ == "__main__":
     app()

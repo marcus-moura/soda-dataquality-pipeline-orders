@@ -6,7 +6,6 @@ from loguru import logger
 import pandas as pd
 
 def get_bigquery_client(project_id: str) -> bigquery.Client:
-    """ Obtém o client do BigQuery """
     try:
         service_account_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 
