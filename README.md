@@ -35,6 +35,7 @@ Este projeto implementa um pipeline de qualidade de dados usando o SODA (SQL Opt
 ├── .python-version
 ├── poetry.lock
 ├── pyproject.toml
+├── requirements.txt
 └── README.md
 ``````
 
