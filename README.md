@@ -158,6 +158,20 @@ No terminal você verá as verificações do ``Soda`` sendo executadas, como na 
 
 ![alt text](images/soda_scan.png)
 
+## Contribuição
+
+Você pode contribuir para este projeto de várias maneiras:
+
+- Reportando bugs
+- Sugerindo novos recursos
+- Enviando pull requests
+
+Por favor, sinta-se à vontade para contribuir!
+
+## Contato
+
+Se você tiver dúvidas ou sugestões, entre em contato comigo em marcuspaulo.moura@hotmail.com.
+
 ## Links Úteis
 
 - [Documentação do Google Cloud SDK](https://cloud.google.com/sdk)
