@@ -4,7 +4,7 @@
 Este projeto implementa um pipeline de qualidade de dados usando o SODA (SQL Optimized Data Audit) para conjuntos de dados do BigQuery. Ele carrega dados brutos de um arquivo CSV para o BigQuery, realiza verificações de qualidade usando o SODA, extrai os dados brutos do BigQuery, os transforma e carrega os dados transformados de volta para o BigQuery enquanto executa verificações do SODA em cada etapa do processo.
 
 ### Fluxo do Pipeline
-![alt text](images/fluxo.png)
+![alt text](images/fluxo_pipeline.png)
 
 ## Estrutura do Projeto
 
